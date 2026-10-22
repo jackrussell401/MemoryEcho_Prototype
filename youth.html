@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryEcho（記憶迴響）- 青年端</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #EFEBE7;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+      color: #251E1A;
+    }
+    .back-nav {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      text-decoration: none;
+      color: #643E24;
+      font-weight: 700;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 10px 18px;
+      border-radius: 9999px;
+      border: 1px solid rgba(157, 107, 62, 0.2);
+      transition: all 0.2s ease;
+    }
+    .back-nav:hover {
+      background: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    /* 手機外框 Mobile Device Frame */
+    .mobile-mockup {
+      width: 100%;
+      max-width: 410px;
+      height: 840px;
+      background: #1E1B18;
+      border-radius: 50px;
+      padding: 14px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25), 0 0 0 2px #443B34;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .mobile-notch {
+      width: 120px;
+      height: 24px;
+      background: #1E1B18;
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 14px;
+      z-index: 100;
+    }
+    .mobile-screen {
+      flex: 1;
+      background: #FAF8F5;
+      border-radius: 38px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* App 頂部狀態與標題 */
+    .app-header {
+      padding: 38px 20px 16px;
+      background: #FFFFFF;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .app-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #251E1A;
+    }
+
+    /* 故事卡容器 */
+    .content-area {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .story-card {
+      background: #FFFFFF;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(157, 107, 62, 0.12);
+      display: flex;
+      flex-direction: column;
+    }
+    .sender-bar {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #F5EFEB;
+    }
+    .sender-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .sender-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #EEA93C;
+      color: #251E1A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .sender-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: #251E1A;
+    }
+    .tag-feed {
+      font-size: 12px;
+      font-weight: 600;
+      background: #F5EFEB;
+      color: #643E24;
+      padding: 4px 10px;
+      border-radius: 9999px;
+    }
+
+    /* 插圖與 XAI 標籤區 */
+    .image-box {
+      position: relative;
+      width: 100%;
+      height: 210px;
+      background: #D9C5B2;
+      overflow: hidden;
+    }
+    .image-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+    }
+    .badge-confidence {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: rgba(36, 28, 24, 0.85);
+      backdrop-filter: blur(4px);
+      color: #FAF7F2;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot-green {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: #38C158;
+      box-shadow: 0 0 6px #38C158;
+    }
+    .badge-source {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: rgba(238, 169, 60, 0.95);
+      color: #251E1A;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 9999px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      border: none;
+      transition: transform 0.1s ease;
+    }
+    .badge-source:active {
+      transform: scale(0.96);
+    }
+    .attribution-popup {
+      display: none;
+      position: absolute;
+      bottom: 10px;
+      left: 12px;
+      right: 12px;
+      background: rgba(36, 28, 24, 0.92);
+      backdrop-filter: blur(8px);
+      color: #FAF7F2;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      line-height: 1.45;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .attribution-popup.active {
+      display: block;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* 故事內文 */
+    .story-body {
+      padding: 16px;
+    }
+    .story-heading {
+      font-size: 17px;
+      font-weight: 800;
+      color: #251E1A;
+      margin-bottom: 8px;
+    }
+    .story-paragraph {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #4C3B32;
+    }
+
+    /* 生命故事線索鏈 (XAI Provenance) */
+    .provenance-section {
+      background: #F7F5F0;
+      margin: 0 16px 16px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px dashed rgba(157, 107, 62, 0.3);
+    }
+    .provenance-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #643E24;
+      margin-bottom: 8px;
+    }
+    .provenance-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: #251E1A;
+      margin-bottom: 6px;
+    }
+    .audio-player-mock {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 9999px;
+      border: 1px solid rgba(157, 107, 62, 0.2);
+      cursor: pointer;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .audio-play-icon {
+      width: 0;
+      height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid #EEA93C;
+    }
+    .audio-progress {
+      flex: 1;
+      height: 4px;
+      background: #EAE6DF;
+      border-radius: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+    .audio-progress-bar {
+      width: 60%;
+      height: 100%;
+      background: #EEA93C;
+    }
+    .audio-time {
+      font-size: 11px;
+      color: #7A716A;
+      font-weight: 600;
+    }
+
+    /* 青年端互動操作欄 (按鈕) */
+    .actions-bar {
+      display: flex;
+      gap: 12px;
+      padding: 16px;
+      background: #FFFFFF;
+      border-radius: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(157, 107, 62, 0.12);
+    }
+    .btn-action {
+      flex: 1;
+      height: 52px;
+      border-radius: 26px;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+    .btn-like {
+      background-color: #FAF4EB;
+      color: #643E24;
+      border: 1px solid rgba(157, 107, 62, 0.3);
+    }
+    .btn-like.liked {
+      background-color: #EEA93C;
+      color: #251E1A;
+      border-color: #EEA93C;
+    }
+    .btn-reply {
+      background-color: #5F3A22;
+      color: #FAF7F2;
+    }
+    .btn-reply.replied {
+      background-color: #38C158;
+      color: #FFFFFF;
+    }
+    .btn-action:active {
+      transform: scale(0.97);
+    }
+
+    /* 互動回饋提示 (皆出自 PDF) */
+    .feedback-box {
+      display: none;
+      background: #FFFFFF;
+      border-radius: 20px;
+      padding: 14px 16px;
+      border-left: 5px solid #EEA93C;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    }
+    .feedback-box.active {
+      display: block;
+      animation: fadeIn 0.25s ease;
+    }
+    .feedback-text-main {
+      font-size: 13px;
+      font-weight: 700;
+      color: #251E1A;
+      margin-bottom: 4px;
+    }
+    .feedback-text-sub {
+      font-size: 12px;
+      color: #643E24;
+      line-height: 1.45;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-nav">MemoryEcho（記憶迴響）</a>
+
+  <div class="mobile-mockup">
+    <div class="mobile-notch"></div>
+    <div class="mobile-screen">
+      <!-- 頂部標題 -->
+      <header class="app-header">
+        <h1 class="app-title">MemoryEcho（記憶迴響）</h1>
+      </header>
+
+      <!-- 主要內容區域 -->
+      <div class="content-area">
+        <!-- 故事卡 -->
+        <article class="story-card">
+          <!-- 發送人資訊 -->
+          <div class="sender-bar">
+            <div class="sender-info">
+              <div class="sender-avatar">林</div>
+              <div class="sender-name">林秀英女士（72 歲，退休國小教師）</div>
+            </div>
+            <span class="tag-feed">精美圖卡推播</span>
+          </div>
+
+          <!-- 插圖與標籤 -->
+          <div class="image-box">
+            <!-- 復古大稻埕記憶插圖 (SVG) -->
+            <svg viewBox="0 0 400 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="240" fill="#E8DFD3"/>
+              <!-- 遠景老街屋天際線 -->
+              <path d="M0 160L30 145L70 145L90 130L140 130L160 150L210 140L250 140L280 125L330 125L360 150L400 135V240H0V160Z" fill="#D3C3AF"/>
+              <path d="M0 180H400V240H0V180Z" fill="#C2AF99"/>
+              <!-- 大稻埕紅磚騎樓與拱門 -->
+              <rect x="25" y="110" width="85" height="70" rx="6" fill="#A86F54"/>
+              <path d="M45 180V140C45 128 90 128 90 140V180" fill="#E8DFD3"/>
+              <rect x="135" y="95" width="110" height="85" rx="6" fill="#996047"/>
+              <path d="M165 180V135C165 120 215 120 215 135V180" fill="#E8DFD3"/>
+              <rect x="270" y="105" width="105" height="75" rx="6" fill="#A86F54"/>
+              <path d="M295 180V135C295 122 350 122 350 135V180" fill="#E8DFD3"/>
+              <!-- 木頭餐桌與復古茶具 -->
+              <ellipse cx="200" cy="210" rx="90" ry="22" fill="#5F3A22"/>
+              <ellipse cx="200" cy="207" rx="84" ry="19" fill="#78492C"/>
+              <rect x="188" y="186" width="24" height="20" rx="3" fill="#FAF7F2"/>
+              <ellipse cx="200" cy="186" rx="12" ry="4" fill="#E0D7CC"/>
+              <!-- 溫暖色調遮罩 -->
+              <rect width="400" height="240" fill="#D9822B" opacity="0.12"/>
+            </svg>
+
+            <!-- 信心燈 -->
+            <div class="badge-confidence">
+              <span class="dot-green"></span>
+              <span>綠燈（高把握度 ≥85%）</span>
+            </div>
+
+            <!-- 溯源標章 -->
+            <button id="btnBadgeSource" class="badge-source" type="button">模擬生成標章</button>
+
+            <!-- 溯源說明彈出卡 -->
+            <div id="attributionPopup" class="attribution-popup">
+              『阿姨，這是根據您說的木頭餐桌，加上 1970年代大稻埕老街景幫您合成的記憶圖喔！』
+            </div>
+          </div>
+
+          <!-- 故事正文 -->
+          <div class="story-body">
+            <h2 class="story-heading">「1970 年代，大稻埕…」</h2>
+            <p class="story-paragraph">「我有好多以前在大稻埕教書的照片，想給孫子看，又怕年輕人覺得無聊。如果機器能幫我整理好，用講的就能變成卡片發給孫子，我會覺得很有成就感！」</p>
+          </div>
+
+          <!-- 生命故事線索鏈 -->
+          <div class="provenance-section">
+            <div class="provenance-title">生命故事線索鏈</div>
+            <div class="provenance-item">
+              <div class="audio-player-mock">
+                <div class="audio-play-icon"></div>
+                <span>原始 12 秒長者語音片段</span>
+                <div class="audio-progress">
+                  <div class="audio-progress-bar"></div>
+                </div>
+                <span class="audio-time">00:12</span>
+              </div>
+            </div>
+            <div class="provenance-item">• AI語意修復對照</div>
+            <div class="provenance-item">• 歷史考據資料庫引用標籤</div>
+          </div>
+        </article>
+
+        <!-- 青年端互動操作欄 (點讚、語音回覆) -->
+        <div class="actions-bar">
+          <button id="btnLike" class="btn-action btn-like" type="button">
+            <span id="likeIcon">♥</span>
+            <span id="likeText">點讚</span>
+          </button>
+          <button id="btnReply" class="btn-action btn-reply" type="button">
+            <span>🎤</span>
+            <span id="replyText">語音回覆</span>
+          </button>
+        </div>
+
+        <!-- 互動回饋區 -->
+        <div id="feedbackBox" class="feedback-box">
+          <div id="feedbackTitle" class="feedback-text-main"></div>
+          <div id="feedbackDesc" class="feedback-text-sub"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const btnBadgeSource = document.getElementById('btnBadgeSource');
+    const attributionPopup = document.getElementById('attributionPopup');
+    const btnLike = document.getElementById('btnLike');
+    const btnReply = document.getElementById('btnReply');
+    const feedbackBox = document.getElementById('feedbackBox');
+    const feedbackTitle = document.getElementById('feedbackTitle');
+    const feedbackDesc = document.getElementById('feedbackDesc');
+
+    let isLiked = false;
+    let isReplied = false;
+
+    // 點擊溯源標章
+    btnBadgeSource.addEventListener('click', () => {
+      attributionPopup.classList.toggle('active');
+    });
+
+    // 點讚互動
+    btnLike.addEventListener('click', () => {
+      isLiked = !isLiked;
+      if (isLiked) {
+        btnLike.classList.add('liked');
+        feedbackBox.classList.add('active');
+        feedbackTitle.innerText = '青年端發送點讚';
+        feedbackDesc.innerText = '適合高齡者收聽之語音朗讀、實體燈光變化與互動紀錄。';
+      } else {
+        btnLike.classList.remove('liked');
+        if (!isReplied) {
+          feedbackBox.classList.remove('active');
+        }
+      }
+    });
+
+    // 語音回覆互動
+    btnReply.addEventListener('click', () => {
+      isReplied = !isReplied;
+      if (isReplied) {
+        btnReply.classList.add('replied');
+        feedbackBox.classList.add('active');
+        feedbackTitle.innerText = '青年端的文字/語音回覆';
+        feedbackDesc.innerText = '長者收音機發出溫馨鈴聲並朗讀回應。';
+      } else {
+        btnReply.classList.remove('replied');
+        if (!isLiked) {
+          feedbackBox.classList.remove('active');
+        } else {
+          feedbackTitle.innerText = '青年端發送點讚';
+          feedbackDesc.innerText = '適合高齡者收聽之語音朗讀、實體燈光變化與互動紀錄。';
+        }
+      }
+    });
+  </script>
+</body>
+</html>

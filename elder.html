@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemoryEcho（記憶迴響）- 長者端</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #F5EFEB;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      position: relative;
+    }
+    .back-nav {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      text-decoration: none;
+      color: #643E24;
+      font-weight: 700;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 10px 18px;
+      border-radius: 9999px;
+      border: 1px solid rgba(157, 107, 62, 0.2);
+      transition: all 0.2s ease;
+    }
+    .back-nav:hover {
+      background: #FFFFFF;
+      transform: translateY(-1px);
+    }
+    .radio-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 720px;
+      user-select: none;
+    }
+    .radio-handle {
+      width: 180px;
+      height: 32px;
+      background-color: #5F3A22;
+      border-radius: 14px 14px 0 0;
+      margin-bottom: -4px;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+    .radio-body {
+      width: 100%;
+      background-color: #9A6739;
+      border-radius: 40px;
+      padding: 38px 42px;
+      box-shadow: 0 20px 48px rgba(95, 58, 34, 0.25), inset 0 2px 6px rgba(255, 255, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+    .radio-top-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+    .screen-container {
+      flex: 1;
+      height: 250px;
+      background-color: #241C18;
+      border-radius: 20px;
+      padding: 24px 28px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.45);
+    }
+    .confidence-light {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: #7A716A;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .confidence-light.active {
+      background-color: #38C158;
+      box-shadow: 0 0 14px #38C158;
+    }
+    .screen-text {
+      color: #FAF7F2;
+      font-size: 30px;
+      font-weight: 700;
+      line-height: 1.45;
+      letter-spacing: 0.5px;
+      transition: opacity 0.2s ease;
+    }
+    .knob-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 150px;
+    }
+    .knob-outer {
+      width: 144px;
+      height: 144px;
+      background-color: #633E25;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .knob-outer:active {
+      transform: scale(0.98);
+    }
+    .knob-inner {
+      width: 62px;
+      height: 62px;
+      background-color: #875833;
+      border-radius: 50%;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2), inset 0 1px 2px rgba(255, 255, 255, 0.15);
+    }
+    .knob-label {
+      color: #FAF7F2;
+      font-size: 17px;
+      font-weight: 700;
+      margin-top: 14px;
+      letter-spacing: 1px;
+    }
+    .radio-bottom-section {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 28px;
+    }
+    .btn-story {
+      flex: 1;
+      height: 76px;
+      background-color: #EEA93C;
+      border: none;
+      border-radius: 38px;
+      color: #241C18;
+      font-size: 28px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12), inset 0 2px 3px rgba(255, 255, 255, 0.25);
+      transition: transform 0.1s ease, filter 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-story:hover {
+      filter: brightness(1.03);
+    }
+    .btn-story:active {
+      transform: scale(0.97);
+      filter: brightness(0.96);
+    }
+    .btn-reset {
+      width: 150px;
+      height: 76px;
+      background-color: #FCD34D;
+      border: none;
+      border-radius: 38px;
+      color: #241C18;
+      font-size: 22px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12), inset 0 2px 3px rgba(255, 255, 255, 0.25);
+      transition: transform 0.1s ease, filter 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .btn-reset:hover {
+      filter: brightness(1.03);
+    }
+    .btn-reset:active {
+      transform: scale(0.97);
+      filter: brightness(0.96);
+    }
+    @media (max-width: 768px) {
+      .radio-body {
+        padding: 24px;
+        border-radius: 28px;
+      }
+      .screen-container {
+        height: 200px;
+      }
+      .screen-text {
+        font-size: 22px;
+      }
+      .knob-outer {
+        width: 100px;
+        height: 100px;
+      }
+      .knob-inner {
+        width: 44px;
+        height: 44px;
+      }
+      .knob-section {
+        width: 110px;
+      }
+      .btn-story {
+        font-size: 22px;
+        height: 64px;
+      }
+      .btn-reset {
+        width: 110px;
+        font-size: 18px;
+        height: 64px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-nav">MemoryEcho（記憶迴響）</a>
+
+  <div class="radio-wrapper">
+    <div class="radio-handle"></div>
+    <div class="radio-body">
+      <div class="radio-top-section">
+        <div class="screen-container">
+          <div id="confidenceLight" class="confidence-light"></div>
+          <div id="screenText" class="screen-text">阿姨，要不要<br>聊聊年輕的事？</div>
+        </div>
+        <div class="knob-section">
+          <div id="knobOuter" class="knob-outer">
+            <div class="knob-inner"></div>
+          </div>
+          <div class="knob-label">音量</div>
+        </div>
+      </div>
+
+      <div class="radio-bottom-section">
+        <button id="btnStory" class="btn-story" type="button">說故事</button>
+        <button id="btnReset" class="btn-reset" type="button">一鍵復原</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const screenText = document.getElementById('screenText');
+    const confidenceLight = document.getElementById('confidenceLight');
+    const btnStory = document.getElementById('btnStory');
+    const btnReset = document.getElementById('btnReset');
+    const knobOuter = document.getElementById('knobOuter');
+
+    let knobRotation = 0;
+
+    btnStory.addEventListener('click', () => {
+      screenText.style.opacity = '0';
+      setTimeout(() => {
+        screenText.innerHTML = '正在聆聽…<br>「1970 年代，大稻埕…」';
+        screenText.style.opacity = '1';
+        confidenceLight.classList.add('active');
+      }, 150);
+    });
+
+    btnReset.addEventListener('click', () => {
+      screenText.style.opacity = '0';
+      setTimeout(() => {
+        screenText.innerHTML = '阿姨，要不要<br>聊聊年輕的事？';
+        screenText.style.opacity = '1';
+        confidenceLight.classList.remove('active');
+      }, 150);
+    });
+
+    knobOuter.addEventListener('click', () => {
+      knobRotation = (knobRotation + 30) % 360;
+      knobOuter.style.transform = `rotate(${knobRotation}deg)`;
+    });
+  </script>
+</body>
+</html>

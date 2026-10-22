@@ -4,96 +4,103 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MemoryEcho（記憶迴響）</title>
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #F5EFEB;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      color: #251E1A;
+    }
+    .container {
+      max-width: 680px;
+      width: 100%;
+      text-align: center;
+      background: #FFFFFF;
+      padding: 56px 40px;
+      border-radius: 32px;
+      box-shadow: 0 16px 40px rgba(100, 62, 36, 0.08);
+      border: 1px solid rgba(157, 107, 62, 0.15);
+    }
+    .title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #251E1A;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+    .subtitle {
+      font-size: 17px;
+      color: #643E24;
+      font-weight: 500;
+      margin-bottom: 48px;
+      line-height: 1.5;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+    }
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 440px;
+      padding: 20px 28px;
+      border-radius: 9999px;
+      text-decoration: none;
+      font-size: 20px;
+      font-weight: 700;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+    .nav-btn-elder {
+      background-color: #EEA93C;
+      color: #251E1A;
+      border: 2px solid #E29B2E;
+    }
+    .nav-btn-elder:hover {
+      background-color: #E29B2E;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(238, 169, 60, 0.35);
+    }
+    .nav-btn-elder:active {
+      transform: translateY(0);
+    }
+    .nav-btn-youth {
+      background-color: #5F3A22;
+      color: #FAF8F5;
+      border: 2px solid #4C2D19;
+    }
+    .nav-btn-youth:hover {
+      background-color: #4C2D19;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(95, 58, 34, 0.3);
+    }
+    .nav-btn-youth:active {
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
-
-  <main class="app-container">
-
-    <!-- 長者端：復古木質收音機 -->
-    <section class="device-section">
-      <h2 class="section-title">長者端：復古木質收音機</h2>
-
-      <div class="radio-device-wrapper">
-        <!-- 頂部提把 -->
-        <div class="radio-handle"></div>
-
-        <!-- 收音機主機身 -->
-        <div class="radio-chassis">
-          <!-- 左側：螢幕與說故事按鍵 -->
-          <div class="chassis-left">
-            <div class="radio-screen" id="radioScreen">
-              <div class="screen-indicator-wrap">
-                <div class="indicator-led state-standby" id="screenIndicatorLed"></div>
-              </div>
-              <div class="screen-content">
-                <div class="screen-text" id="radioScreenText">阿姨，要不要
-聊聊年輕的事？</div>
-              </div>
-            </div>
-
-            <button type="button" class="btn-story" id="btnStory">說故事</button>
-          </div>
-
-          <!-- 右側：音量旋鈕與一鍵復原按鍵 -->
-          <div class="chassis-right">
-            <div class="knob-container">
-              <div class="rotary-knob" id="rotaryKnob">
-                <div class="knob-inner"></div>
-              </div>
-              <div class="knob-label">音量</div>
-            </div>
-
-            <button type="button" class="btn-reset" id="btnReset">一鍵復原</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 青年端：手機 App 畫面 -->
-    <section class="device-section">
-      <h2 class="section-title">青年端：手機 App</h2>
-
-      <div class="mobile-phone-frame">
-        <div class="phone-screen">
-          <div class="phone-status-bar">
-            <span>15:00</span>
-            <span>5G 📶 100% 🔋</span>
-          </div>
-
-          <div class="phone-app-header">
-            <div class="phone-app-title">MemoryEcho</div>
-            <div class="phone-user-chip">陳家豪</div>
-          </div>
-
-          <div class="phone-body">
-            <!-- 長者傳來的故事卡（只保留故事文字） -->
-            <div class="youth-story-card">
-              <div class="card-top-meta">
-                <div class="elder-avatar">秀英</div>
-                <div class="elder-meta-info">
-                  <span class="elder-meta-name">林秀英（72 歲）</span>
-                  <span class="elder-meta-time">1970 年代大稻埕</span>
-                </div>
-              </div>
-
-              <div class="card-story-text" id="youthStoryText">
-                以前大稻埕故事很多，我有好多以前在大稻埕教書的照片…
-              </div>
-            </div>
-          </div>
-
-          <!-- 下方只留「點讚」和「語音回覆」兩個按鈕 -->
-          <div class="youth-actions-bar">
-            <button type="button" class="btn-youth-action" id="youthBtnLike">點讚</button>
-            <button type="button" class="btn-youth-action" id="youthBtnVoice">語音回覆</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
+  <main class="container">
+    <h1 class="title">MemoryEcho（記憶迴響）</h1>
+    <p class="subtitle">獨居長者跨世代生命故事共創與智慧陪伴系統</p>
+    <div class="button-group">
+      <a href="elder.html" class="nav-btn nav-btn-elder">長者端（復古木質收音機）</a>
+      <a href="youth.html" class="nav-btn nav-btn-youth">青年端（手機 App）</a>
+    </div>
   </main>
-
-  <script src="js/app.js"></script>
 </body>
 </html>
