@@ -82,19 +82,32 @@
       align-items: center;
       box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.45);
     }
-    .confidence-light {
+    .confidence-lights {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: #7A716A;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      top: 22px;
+      right: 24px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
     }
-    .confidence-light.active {
+    .confidence-light-dot {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      display: inline-block;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .light-green {
       background-color: #38C158;
-      box-shadow: 0 0 14px #38C158;
+    }
+    .light-green.active {
+      box-shadow: 0 0 10px #38C158;
+    }
+    .light-yellow {
+      background-color: #F6C343;
+    }
+    .light-blue {
+      background-color: #3B82F6;
     }
     .screen-text {
       color: #FAF7F2;
@@ -234,7 +247,11 @@
     <div class="radio-body">
       <div class="radio-top-section">
         <div class="screen-container">
-          <div id="confidenceLight" class="confidence-light"></div>
+          <div class="confidence-lights">
+            <span id="lightGreen" class="confidence-light-dot light-green"></span>
+            <span id="lightYellow" class="confidence-light-dot light-yellow"></span>
+            <span id="lightBlue" class="confidence-light-dot light-blue"></span>
+          </div>
           <div id="screenText" class="screen-text">阿姨，要不要<br>聊聊年輕的事？</div>
         </div>
         <div class="knob-section">
@@ -254,7 +271,7 @@
 
   <script>
     const screenText = document.getElementById('screenText');
-    const confidenceLight = document.getElementById('confidenceLight');
+    const lightGreen = document.getElementById('lightGreen');
     const btnStory = document.getElementById('btnStory');
     const btnReset = document.getElementById('btnReset');
     const knobOuter = document.getElementById('knobOuter');
@@ -266,7 +283,7 @@
       setTimeout(() => {
         screenText.innerHTML = '正在聆聽…<br>「1970 年代，大稻埕…」';
         screenText.style.opacity = '1';
-        confidenceLight.classList.add('active');
+        lightGreen.classList.add('active');
       }, 150);
     });
 
@@ -275,7 +292,7 @@
       setTimeout(() => {
         screenText.innerHTML = '阿姨，要不要<br>聊聊年輕的事？';
         screenText.style.opacity = '1';
-        confidenceLight.classList.remove('active');
+        lightGreen.classList.remove('active');
       }, 150);
     });
 
